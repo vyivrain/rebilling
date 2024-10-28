@@ -3,9 +3,10 @@ require 'active_support/all'
 class PartialRebillProcessor
   EXPECTED_PAYMENT_RESPONSE_STATUSES = %w[success insufficient_funds].freeze
 
-  def initialize(rebill)
+  def initialize(rebill, logger)
     @rebill = rebill
     @subscription = @rebill.subscription
+    @logger = logger
   end
 
   def process
@@ -28,6 +29,7 @@ class PartialRebillProcessor
 
     unless payment_processed
       @rebill.update(status: 'cancelled')
+      @logger.info("Rebill #{@rebill[:id]} was cancelled")
     end
   end
 
@@ -49,6 +51,7 @@ class PartialRebillProcessor
     begin
       json_response = JSON.parse(response.body)
     rescue JSON::ParserError
+      @logger.warn("Can't parse payment api response for rebill #{@rebill[:id]}")
       raise UnhandledException, "Can't parse payment api response - #{response.body}"
     end
 
@@ -66,8 +69,10 @@ class PartialRebillProcessor
   def handle_success_response(amount)
     if (@rebill.amount - amount).round(2) == 0
       @rebill.update(amount: (@rebill.amount - amount).round(2), status: 'processed')
+      @logger.info("Rebill #{@rebill[:id]} was charged for #{(amount).round(2)} and moved to processed")
     else
       @rebill.update(amount: (@rebill.amount - amount).round(2), scheduled_at: ENV['SCHEDULE_TIME_IN_HOURS']&.to_i&.hours&.since, status: 'processing')
+      @logger.info("Rebill #{@rebill[:id]} was partially charged for #{(amount).round(2)} and scheduled for #{ENV['SCHEDULE_TIME_IN_HOURS']&.to_i&.hours&.since}")
     end
   end
 end
