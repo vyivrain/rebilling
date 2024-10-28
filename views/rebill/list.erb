@@ -1,0 +1,29 @@
+<div class="container">
+  <h2>Rebills</h2>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Status</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Subscription Identifier</th>
+          <th scope="col">Account Identifier</th>
+          <th scope="col">Scheduled At</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rebills.each do |rebill| %>
+          <tr>
+            <th scope="row"><%= rebill[:id] %></th>
+            <td><%= rebill[:status] %></td>
+            <td><%= rebill[:amount] %></td>
+            <td><%= rebill[:subscription_identifier] %></td>
+            <td><%= rebill[:account_identifier] %></td>
+            <td><%= rebill[:scheduled_at] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

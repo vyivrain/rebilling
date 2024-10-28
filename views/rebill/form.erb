@@ -1,0 +1,31 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Try Rebill</h4>
+        </div>
+        <div class="card-body">
+          <form action="/rebill" method="POST">
+            <div class="mb-3">
+              <label for="account_identifier" class="form-label">Account Identifier:</label>
+              <input type="text" class="form-control" id="account_identifier" name="account_identifier" step="0.01" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="subscription_identifier" class="form-label">Subscription Identifier:</label>
+              <input type="text" class="form-control" id="subscription_identifier" name="subscription_identifier" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="amount" class="form-label">Amount:</label>
+              <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Try Rebill</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

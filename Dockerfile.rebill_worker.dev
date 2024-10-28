@@ -1,0 +1,19 @@
+# Pull official base image
+FROM ruby:3.3.5-bullseye
+
+# install psycopg2 dependencies.
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /code
+
+WORKDIR /code
+
+COPY . /code
+
+RUN gem install bundler
+RUN bundle
+
+EXPOSE 4569

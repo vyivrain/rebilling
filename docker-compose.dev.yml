@@ -1,0 +1,66 @@
+version: "3"
+
+services:
+  payment_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.payment.dev
+    command: >
+      bundle exec rackup config.ru -p 4567 -o 0.0.0.0
+    working_dir: /code
+    volumes:
+      - .:/code
+    ports:
+      - "4567:4567"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  rebill_app:
+    build:
+      context: .
+      dockerfile: Dockerfile.rebill.dev
+    command: >
+      bundle exec rackup config_rebill.ru -p 4568 -o 0.0.0.0
+    working_dir: /code
+    volumes:
+      - .:/code
+    ports:
+      - "4568:4568"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  rebill_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.rebill_worker.dev
+    command: >
+      bundle exec ruby apps/worker.rb -p 4569 -o 0.0.0.0
+    working_dir: /code
+    volumes:
+      - .:/code
+    ports:
+      - "4569:4569"
+    env_file:
+      - ./.env
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  db:
+    image: postgres:15
+    volumes:
+      - db_volume_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - ./.env
+
+volumes:
+  db_volume_data:
+
